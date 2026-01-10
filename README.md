@@ -1,4 +1,4 @@
-# DK_AI Standalone Deployment
+# DK_AI Deployment
 
 This is the standalone deployment version of the DK_AI project.
 

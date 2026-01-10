@@ -15,6 +15,7 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System.
 ## 📂 Project Structure
 - `ai_server.py`: **Main Production Server** (Uses RTSP Cameras).
 - `ai_server_test.py`: **Test Server** (Uses looped video files for demo/debug).
+- `setup.py`: **Setup Wizard** to initialize the project easier.
 - `test_videos/`: Contains sample footage (`front.mp4`, `back.mp4`) for testing.
 - `mobile_flutter/`: Source code for the mobile client.
 - `src/`: Core AI modules.
@@ -26,6 +27,11 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System.
 Install dependencies:
 ```bash
 pip install -r requirements.txt
+```
+
+**Recommended**: Run the setup wizard to create directories, configs, and check dependencies:
+```bash
+python setup.py
 ```
 
 ### 2. Running the Test Server (Demo Mode)
@@ -53,7 +59,8 @@ flutter run
 ```
 - Ensure your phone/emulator is on the same network.
 - Enter the computer's IP address (displayed in the server console) when prompted by the app.
+- Check `lib/config/api_config.dart` if you need to hardcode the IP.
 
 ## 🔐 Configuration
-- **API Keys**: Create a `.env` file (see `.env.example` if available) to set `GEMINI_API_KEY`.
+- **API Keys**: Create a `.env` file (use `.env.example` as a template) to set `GEMINI_API_KEY`.
 - **Ignore Rules**: Large files (`*.mp4`, `*.db`) are ignored by git to keep the repo light.

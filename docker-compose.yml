@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  dkai-server:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./weights:/app/weights
+      - ./vehicle_logs.db:/app/vehicle_logs.db
+    env_file:
+      - .env
+    restart: unless-stopped

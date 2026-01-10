@@ -1,50 +1,39 @@
+# Environment variables
+.env
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Environments
-.env
-.venv
-env/
+*.so
+.Python
 venv/
-ENV/
-env.bak/
-venv.bak/
+env/
 
-# Distribution / packaging
-dist/
-build/
-*.spec
-
-# Logs
-*.log
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Project specific
+# Database
 *.db
-*.mp4
-*.avi
-*.mov
-outputs/
+*.db-shm
+*.db-wal
+
+# Model weights (if large)
+weights/*.pt
+
+# Test videos (if large)
+test_videos/*.mp4
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Flutter/Dart
+mobile_flutter/.dart_tool/
+mobile_flutter/build/
+mobile_flutter/.flutter-plugins
+mobile_flutter/.flutter-plugins-dependencies
+
+# Project Specific
 images/
-images_test/
+outputs/
 captures/
-temp_*.jpg

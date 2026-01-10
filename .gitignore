@@ -39,6 +39,12 @@ coverage.xml
 Thumbs.db
 
 # Project specific
-# registry.db # Depending on if user wants to ship the DB or not. Usually safer to ignore, but for standalone deployment user might want the structure. 
-# outputs/
-# images/
+*.db
+*.mp4
+*.avi
+*.mov
+outputs/
+images/
+images_test/
+captures/
+temp_*.jpg

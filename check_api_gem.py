@@ -2,9 +2,18 @@ import google.generativeai as genai
 import os
 import time
 
-# 1. Điền API Key của bạn
-os.environ["GOOGLE_API_KEY"] = "AIzaSyAgN5gHb1pFEqH9pXzOcP-whZMLDSGWVh0"
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# 1. Điền API Key của bạn (đã được load từ file .env)
+api_key = os.getenv("GEMINI_API_KEY") 
+if not api_key:
+    # Fallback for manual testing if env not set
+    # api_key = "YOUR_KEY_HERE" 
+    print("Warning: GEMINI_API_KEY not found in environment variables.")
+
+genai.configure(api_key=api_key)
 
 # 2. Chọn model cần test (Bản Experimental)
 model_name = "gemini-2.0-flash-exp" 

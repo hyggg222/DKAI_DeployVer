@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DK_AI TEST SERVER</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .cam-feed {
+            width: 100%;
+            min-height: 200px;
+            background: #000;
+            border-radius: 8px;
+            border: 2px solid #444;
+        }
+
+        .card-review {
+            border-left: 6px solid #ffc107;
+            background-color: #fff9e6;
+            animation: slideIn 0.3s;
+        }
+
+        .card-approved {
+            border-left: 6px solid #198754;
+            background-color: #fff;
+            opacity: 0.9;
+        }
+
+        .img-thumb {
+            height: 80px;
+            width: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scanning-mode .loader {
+            display: block;
+        }
+
+        .loader {
+            display: none;
+            font-weight: bold;
+            color: #dc3545;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid py-3">
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <div id="control-panel" class="p-3 bg-white shadow-sm rounded">
+                    <h4 class="mb-3 text-uppercase fw-bold text-dark">TEST SERVER CONTROL (SOCKET.IO)</h4>
+                    <div class="alert alert-warning">Running in TEST MODE with Socket.IO</div>
+
+                    <div id="scanning-indicator" class="loader mt-2">
+                        <h4>📡 SCANNING... <span id="timer">10</span>s</h4>
+                        <div class="progress mt-2" style="height: 5px; width: 50%; margin: 0 auto;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
+                                style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-dark text-white fw-bold">CAM 1: BIỂN SỐ (FRONT)</div>
+                    <div class="card-body p-1"><img src="/video_feed/front" class="cam-feed"></div>
+                </div>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white fw-bold">CAM 2: XE RA VÀO (BACK)</div>
+                    <div class="card-body p-1"><img src="/video_feed/back" class="cam-feed"></div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-secondary">📋 LIVE RESULTS</h5>
+                    <div>
+                        <span class="badge bg-secondary ms-2" id="conn-status">Connecting...</span>
+                    </div>
+                </div>
+                <div id="list-container" style="height: 75vh; overflow-y: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="imgModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-body text-center bg-dark"><img id="zoomImg" src="" class="img-fluid"
+                        style="max-height: 80vh"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        // SOCKET.IO CONNECTION
+        const socket = io();
+
+        socket.on('connect', () => {
+            document.getElementById('conn-status').innerText = "Connected (Socket.IO)";
+            document.getElementById('conn-status').className = "badge bg-success ms-2";
+        });
+
+        socket.on('disconnect', () => {
+            document.getElementById('conn-status').innerText = "Disconnected";
+            document.getElementById('conn-status').className = "badge bg-danger ms-2";
+        });
+
+        // Listen for 'status_update'
+        socket.on('status_update', (payload) => {
+            updateUIState(payload);
+        });
+
+        // Listen for 'review_request' (New Protocol)
+        socket.on('review_request', (payload) => {
+            console.log("Review Request:", payload);
+            if (payload.data) {
+                renderCard(payload.data, true);
+            } else {
+                renderCard(payload, true); // Fallback
+            }
+        });
+
+        // Also listen for generic 'update' just in case
+        socket.on('update', (payload) => {
+            if (payload.type === 'review_request') {
+                renderCard(payload.data, true);
+            }
+        });
+
+        const container = document.getElementById('list-container');
+        const scanIndicator = document.getElementById('scanning-indicator');
+
+        function updateUIState(payload) {
+            if (payload.status === 'scanning') {
+                scanIndicator.style.display = 'block';
+            } else {
+                scanIndicator.style.display = 'none';
+            }
+        }
+
+        function renderCard(data, isNew) {
+            // Avoid duplicates if possible
+            if (document.getElementById(`card-${data.id}`)) return;
+
+            const div = document.createElement('div');
+            div.id = `card-${data.id}`;
+            let statusClass = "card-review";
+
+            div.className = `card shadow-sm mb-3 ${statusClass}`;
+            div.innerHTML = `
+            <div class="card-body p-2">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center text-muted small">
+                        ${data.time}<br><strong>#${data.id}</strong>
+                    </div>
+                    <div class="col-md-3 text-center">
+                         <img src="${data.plate_image}" class="img-thumb" onclick="zoom(this.src)" onerror="this.src='/static/no_plate.jpg'">
+                    </div>
+                    <div class="col-md-3 text-center">
+                         <img src="${data.car_image}" class="img-thumb" onclick="zoom(this.src)" onerror="this.src='/static/no_car.jpg'">
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="text-primary text-center fw-bold">${data.plate_number}</h3>
+                        <div class="text-center"><span class="badge bg-secondary">${data.status}</span></div>
+                    </div>
+                </div>
+            </div>`;
+            container.insertBefore(div, container.firstChild);
+        }
+
+        function zoom(src) { document.getElementById('zoomImg').src = src; new bootstrap.Modal(document.getElementById('imgModal')).show(); }
+
+        // Load History on Start
+        window.onload = async () => {
+            try {
+                const res = await fetch('/api/history');
+                const data = await res.json();
+                data.forEach(item => renderCard(item, false));
+            } catch (e) { console.error("History error:", e); }
+        };
+    </script>
+</body>
+
+</html>

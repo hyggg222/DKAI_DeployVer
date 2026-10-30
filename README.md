@@ -1,5 +1,4 @@
-# DK_AI Standalone System
-
+# DKAI System
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.0+-02569B.svg?logo=flutter)](https://flutter.dev/)
@@ -8,7 +7,7 @@
 
 A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time license plate detection, recognition, and automated gate control.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Quick Start](#-quick-start)
@@ -20,12 +19,9 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time li
 - [Usage](#-usage)
 - [Mobile App Setup](#-mobile-app-setup)
 - [Screenshots](#-screenshots)
-- [API Documentation](#-api-documentation)
-- [Troubleshooting](#-troubleshooting)
-- [FAQ](#-faq)
 - [License](#-license)
 
-## ✨ Features
+## Features
 
 - Real-time vehicle detection using YOLOv11
 - License plate detection with custom fine-tuned YOLO model
@@ -36,28 +32,22 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time li
 - SQLite database with WAL mode for high concurrency
 - Support for both RTSP cameras and test video files
 
-## ⚡ Quick Start
+## Quick Start
 
 ```bash
-# 1. Clone and navigate
 git clone https://github.com/hyggg222/DKAI_DeployVer.git
 cd DKAI_DeployVer
-
-# 2. Run setup wizard
 python setup.py
 
-# 3. Configure .env file
-# (Setup wizard does this, but manual option below)
+# Configure .env file (Setup wizard does this, but manual option below)
 # cp .env.example .env
 
-# 4. Test the system
 python ai_server_test.py
 
-# 5. Open browser
 # Visit http://localhost:8001
 ```
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Language**: Python 3.10+
 - **Backend**: FastAPI (REST API), Python-SocketIO (Real-time WebSocket)
@@ -68,27 +58,7 @@ python ai_server_test.py
 - **Database**: SQLite (WAL Mode enabled for high concurrency)
 - **Mobile App**: Flutter (Dart)
 
-## 💻 System Requirements
-
-### Minimum Requirements
-- **OS**: Windows 10/11, Ubuntu 20.04+, or macOS 11+
-- **CPU**: Intel Core i5 (8th gen) or equivalent
-- **RAM**: 8GB
-- **Storage**: 5GB free space
-- **Python**: 3.10 or higher
-
-### Recommended Requirements
-- **CPU**: Intel Core i7/i9 or AMD Ryzen 7/9
-- **GPU**: NVIDIA GPU with CUDA support (GTX 1660 or better)
-- **RAM**: 16GB or more
-- **Storage**: 10GB+ SSD
-
-### For Mobile App Development
-- **Flutter SDK**: 3.0+
-- **Dart SDK**: 3.0+
-- **Android Studio** or **Xcode** (for iOS)
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 DKAI_DeployVer/
@@ -118,7 +88,7 @@ DKAI_DeployVer/
     └── pubspec.yaml     # Flutter dependencies
 ```
 
-## 🚀 Installation
+## Installation
 
 ### 1. Clone the Repository
 
@@ -132,10 +102,8 @@ cd DKAI_DeployVer
 It's recommended to use a virtual environment:
 
 ```bash
-# Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
 # On Windows:
 venv\Scripts\activate
 # On macOS/Linux:
@@ -180,7 +148,7 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### 1. Environment Variables
 
@@ -200,20 +168,15 @@ GEMINI_API_KEY=your_gemini_api_key_here
 RTSP_FRONT=rtsp://username:password@camera_ip:554/stream1
 RTSP_BACK=rtsp://username:password@camera_ip:554/stream2
 
-# Optional: Server Configuration
+# Server Configuration
 SERVER_HOST=0.0.0.0
 SERVER_PORT=8001
 
-# Optional: Database Configuration
+# Database Configuration
 DATABASE_PATH=./vehicle_logs.db
 ```
 
-### 2. Get Google Gemini API Key
-
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the API key and paste it in your `.env` file
+### 2. Get Google Gemini API Key -> Put it in your `.env` file
 
 ### 3. RTSP Camera URLs
 
@@ -229,7 +192,7 @@ rtsp://192.168.1.101:8554/cam1
 rtsp://username:password@camera.example.com/live
 ```
 
-## 🎮 Usage
+## Usage
 
 ### Running the Test Server (Demo Mode)
 
@@ -281,30 +244,23 @@ python ai_server.py
 
 Press `Ctrl + C` in the terminal to gracefully shut down the server.
 
-## 📱 Mobile App Setup
+## Mobile App Setup
 
-### 1. Install Flutter
+### Install Flutter
 
-Follow the official Flutter installation guide: [flutter.dev](https://flutter.dev/docs/get-started/install)
-
-Verify installation:
-```bash
-flutter doctor
-```
-
-### 2. Navigate to Mobile Directory
+### Navigate to Mobile Directory
 
 ```bash
 cd mobile_flutter
 ```
 
-### 3. Install Dependencies
+### Install Dependencies
 
 ```bash
 flutter pub get
 ```
 
-### 4. Configure Server Connection
+### Configure Server Connection
 
 Edit `lib/config/api_config.dart` (or similar file) with your server IP:
 
@@ -350,7 +306,7 @@ flutter build apk --release
 
 The APK will be in `build/app/outputs/flutter-apk/app-release.apk`
 
-## � Screenshots
+## Screenshots
 
 *(Placeholder for future screenshots - Add your images to docs/images/ folder)*
 ### Web Interface
@@ -359,7 +315,7 @@ The APK will be in `build/app/outputs/flutter-apk/app-release.apk`
 ### Mobile App
 <img src="docs/images/mobile-app.png" alt="Mobile App" width="300">
 
-## �📡 API Documentation
+## API Documentation
 
 ### REST API Endpoints
 
@@ -420,98 +376,14 @@ socket.on('vehicle_detected', (data) => {
 });
 ```
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### 1. Import Errors or Missing Dependencies
-```bash
-# Reinstall all dependencies
-pip install -r requirements.txt --force-reinstall
-```
-
-#### 2. CUDA/GPU Not Detected
-```bash
-# Verify PyTorch CUDA installation
-python -c "import torch; print(torch.cuda.is_available())"
-
-# If False, reinstall PyTorch with CUDA support
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
-```
-
-#### 3. Camera Connection Failed
-- Verify RTSP URL is correct
-- Check camera is accessible on network: `ping camera_ip`
-- Test RTSP stream with VLC Media Player
-- Ensure firewall allows RTSP traffic (port 554)
-
-#### 4. Gemini API Errors
-```
-Error: Invalid API Key
-```
-**Solution**: 
-- Verify your `GEMINI_API_KEY` in `.env`
-- Check if the API key is active in Google AI Studio
-- Ensure you haven't exceeded API quota
-
-#### 5. Database Locked Error
-```
-sqlite3.OperationalError: database is locked
-```
-**Solution**: 
-- The server automatically uses WAL mode
-- If issue persists, delete `vehicle_logs.db` and restart
-
-#### 6. Port Already in Use
-```
-Error: [Errno 48] Address already in use
-```
-**Solution**:
-```bash
-# Find process using port 8001
-# Windows:
-netstat -ano | findstr :8001
-# macOS/Linux:
-lsof -i :8001
-
-# Kill the process or change port in code
-```
-
-#### 7. Mobile App Cannot Connect
-- Ensure phone and server are on the same network
-- Check firewall settings allow port 8001
-- Verify server IP address in app configuration
-- Test server accessibility: `http://server-ip:8001` in phone browser
-
-## ❓ FAQ
-
-**Q: Do I need a GPU to run this?**
-A: No, but a GPU (NVIDIA with CUDA) significantly improves performance. The system works on CPU-only systems with reduced frame rates.
-
-**Q: Can I use USB webcams instead of RTSP cameras?**
-A: Yes! Use camera ID (0, 1, etc.) in the .env file or when prompted.
-
-**Q: How accurate is the license plate recognition?**
-A: Accuracy depends on lighting, camera quality, and plate visibility. Typically 85-95% in good conditions.
-
-**Q: Can I use this commercially?**
-A: Yes, the project is MIT licensed.
-
-**Q: Does this work with non-English license plates?**
-A: Yes, Google Gemini supports multiple languages and character sets.
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📧 Contact
+## Contact
 
 For questions or support, please open an issue on GitHub.
-
----
-
-**Note**: This system is designed for controlled environments. Ensure compliance with local privacy and surveillance regulations when deploying in production.

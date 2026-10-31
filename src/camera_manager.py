@@ -12,24 +12,24 @@ class CameraStream:
         self.frame = None
         self.lock = threading.Lock()
         
-        # Thêm biến này để biết video đã hết chưa
+
         self.finished = False 
         
-        # Kiểm tra nguồn là File hay Live
+
         self.is_file = isinstance(source, str) and os.path.exists(source)
         if self.is_file:
-            print(f"[{name}] Mode: VIDEO FILE (ONE-SHOT)") # Đổi tên mode
+            print(f"[{name}] Mode: VIDEO FILE (ONE-SHOT)")
         else:
             print(f"[{name}] Mode: LIVE STREAM")
 
         self.stream = cv2.VideoCapture(self.source)
         
-        # Tạo ảnh đen chờ sẵn
+  
         self.frame = np.zeros((360, 640, 3), dtype=np.uint8)
         cv2.putText(self.frame, "LOADING...", (50, 180), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
         if not self.stream.isOpened():
-            print(f"[{name}] LỖI: Không mở được nguồn!")
+            print(f"[{name}] Error: Cannot open source!")
             self.stopped = True
 
         self.fps = self.stream.get(cv2.CAP_PROP_FPS)
@@ -45,24 +45,23 @@ class CameraStream:
         while True:
             if self.stopped: return
 
-            # Nếu video đã hết, ngủ đông (giữ nguyên frame cuối)
+  
             if self.finished:
                 time.sleep(0.1)
                 continue
 
             if self.is_file:
-                time.sleep(1 / self.fps) # Giả lập FPS thực
+                time.sleep(1 / self.fps) 
 
             grabbed, frame = self.stream.read()
 
             if not grabbed:
                 if self.is_file:
-                    # >>> SỬA Ở ĐÂY: KHÔNG TUA LẠI NỮA <<<
-                    print(f"[{self.name}] Đã hết video. Dừng tại frame cuối.")
-                    self.finished = True # Đánh dấu đã xong
+         
+                    print(f"[{self.name}] End of video. Stop at last frame.")
+                    self.finished = True 
                     continue 
                 else:
-                    # Nếu là Live stream mà mất tín hiệu thì thử kết nối lại
                     self.stream.release()
                     time.sleep(2)
                     self.stream = cv2.VideoCapture(self.source)
@@ -73,7 +72,6 @@ class CameraStream:
 
     def read(self):
         with self.lock:
-            # Luôn trả về ảnh (kể cả khi finished, nó sẽ trả về frame cuối cùng)
             return self.frame.copy() if self.frame is not None else np.zeros((360, 640, 3), dtype=np.uint8)
 
     def stop(self):

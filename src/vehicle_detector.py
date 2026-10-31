@@ -8,13 +8,11 @@ class CarDetector:
         self.model = YOLO(model_path)
         self.target_classes = [2, 5, 7]  # Car, Bus, Truck
 
-        # --- QUẢN LÝ ID CŨ (State) ---
         self.captured_ids = set()
         self.id_last_seen = {}
         self.frame_count = 0
-        self.forget_threshold = 300 # Quên ID sau 300 frame không gặp
+        self.forget_threshold = 300 
 
-        # --- CẤU HÌNH (Giữ nguyên của bạn) ---
         self.margin = 0.02
         self.zone_x_min = self.margin
         self.zone_x_max = 1 - self.margin
@@ -24,11 +22,10 @@ class CarDetector:
         self.min_area_ratio = 0.03
         self.max_occlusion_ratio = 0.05
 
-        self.latest_box = None # Lưu box xe tốt nhất frame hiện tại
+        self.latest_box = None 
         self.latest_id = None
 
     def get_safe_zone(self, w, h):
-        """Trả về toạ độ vùng an toàn để vẽ: (x1, y1, x2, y2)"""
         x1 = int(w * self.zone_x_min)
         x2 = int(w * self.zone_x_max)
         y1 = int(h * self.zone_y_min)
@@ -36,7 +33,6 @@ class CarDetector:
         return (x1, y1, x2, y2)
 
     def is_cut_off(self, xywh, frame_w, frame_h):
-        """Kiểm tra xe có bị chạm mép ảnh không"""
         cx, cy, w, h = xywh
         x1 = cx - w / 2
         y1 = cy - h / 2
@@ -51,7 +47,6 @@ class CarDetector:
         return touch_left or touch_top or touch_right or touch_bottom
 
     def is_full_box_in_zone(self, xywh, video_w, video_h):
-        """Kiểm tra toàn bộ xe nằm trong Safe Zone"""
         cx, cy, w, h = xywh
         x1 = cx - w / 2
         y1 = cy - h / 2
@@ -117,7 +112,6 @@ class CarDetector:
         self.frame_count += 1
         video_h, video_w = frame.shape[:2]
         
-        # Reset biến vẽ
         self.latest_box = None
         self.latest_id = None
         # self.raw_detections is now updated ATOMICALLY at the end
@@ -129,8 +123,7 @@ class CarDetector:
             self.raw_detections = [] 
             return None, None
 
-        # Lấy dữ liệu
-        boxes = results[0].boxes.xywh.cpu().numpy() # Dạng Center-X, Center-Y, Width, Height
+        boxes = results[0].boxes.xywh.cpu().numpy() 
         track_ids = results[0].boxes.id.int().cpu().tolist()
         cls_ids = results[0].boxes.cls.int().cpu().tolist()
         confs = results[0].boxes.conf.cpu().numpy()
@@ -138,16 +131,11 @@ class CarDetector:
         current_frame_vehicles = []
         _local_raw_detections = []
 
-        # 2. DUYỆT QUA CÁC XE VÀ IN BOUNDING BOX
+        # 2. ITERATING THROUGH VEHICLE AND ID
         for box, track_id, cls_id, conf in zip(boxes, track_ids, cls_ids, confs):
             if cls_id in self.target_classes:
-                # --- IN RA BOUNDING BOX TẠI ĐÂY ---
+       
                 cx, cy, w, h = map(int, box)
-                # if capture_enabled:
-                #      # Chỉ in log nếu conf cao
-                #      if conf > 0.5:
-                #         # print(f">>> [DETECT RAW] ID: {track_id} | Conf: {conf:.2f} | Box: [cx={cx}, cy={cy}, w={w}, h={h}]")
-                # # ----------------------------------
 
                 current_frame_vehicles.append({
                     'box': box,
@@ -168,7 +156,7 @@ class CarDetector:
             self.raw_detections = []
 
 
-        # 3. TÌM BEST CANDIDATE (Logic cũ)
+        # 3. FIND BEST CANDIDATE 
         best_vehicle = None
         max_area = 0
         
@@ -180,29 +168,22 @@ class CarDetector:
             box = veh['box']
             track_id = veh['id']
             obj_area = veh['area']
-            
-            # A. Lọc kích thước
+
             ratio = obj_area / safe_zone_area
             if ratio < self.min_area_ratio: 
-                # print(f">>> [BỎ] ID {track_id}: Quá nhỏ ({ratio:.2f})")
                 continue
             
-            # B. Lọc cắt biên
             if self.is_cut_off(box, video_w, video_h): 
-                # print(f">>> [BỎ] ID {track_id}: Chạm mép")
                 continue
 
-            # C. Lọc che khuất
             other_boxes = [v['box'] for v in current_frame_vehicles if v['id'] != track_id]
             if self.calculate_occlusion(box, other_boxes): 
                 continue
 
-            # Chọn xe to nhất
             if obj_area > max_area:
                 max_area = obj_area
                 best_vehicle = veh
 
-        # Dọn dẹp ID cũ
         if self.frame_count % 30 == 0:
             ids_to_remove = [tid for tid in self.captured_ids 
                              if self.frame_count - self.id_last_seen.get(tid, 0) > self.forget_threshold]
@@ -210,9 +191,8 @@ class CarDetector:
                 self.captured_ids.remove(tid)
                 if tid in self.id_last_seen: del self.id_last_seen[tid]
 
-        # 4. KẾT QUẢ CUỐI CÙNG
+        # 4. FINAL RESULT
         if best_vehicle and capture_enabled:
-            # Lưu để vẽ box đỏ
             bx, by, bw, bh = best_vehicle['box']
             x1, y1, x2, y2 = int(bx-bw/2), int(by-bh/2), int(bx+bw/2), int(by+bh/2)
             self.latest_box = (x1, y1, x2, y2)
@@ -221,7 +201,7 @@ class CarDetector:
             tid = best_vehicle['id']
             if tid not in self.captured_ids:
                 if self.is_full_box_in_zone(best_vehicle['box'], video_w, video_h):
-                    print(f">>> [DETECT] 📸 CAPTURE SUCCESS ID {tid}")
+                    print(f">>> [DETECT] CAPTURE SUCCESS ID {tid}")
                     self.captured_ids.add(tid)
                     
                     # Crop ảnh và trả về

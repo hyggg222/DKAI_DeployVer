@@ -258,11 +258,11 @@ def ai_loop():
                 
                 # --- THÊM LOG THÔNG BÁO TẠI ĐÂY ---
                 if p is not None and current_session["plate_img"] is None:
-                    print(f">>> [SESSION] ✅ Đã bắt được BIỂN SỐ")
+                    print(f">>> [SESSION] Catched Plate")
                     current_session["plate_img"] = p
 
                 if c is not None and current_session["car_img"] is None:
-                    print(f">>> [SESSION] ✅ Đã bắt được XE TOÀN CẢNH (ID: {car_id})")
+                    print(f">>> [SESSION] Catched Vehicle (ID: {car_id})")
                     current_session["car_img"] = c
                 # ----------------------------------
                 
@@ -521,29 +521,22 @@ def gen_mjpeg(cam_id):
                 scale_x = w / orig_w
                 scale_y = h / orig_h
 
-                # --- 1. VẼ SAFE ZONE CHO CẢ 2 CAM (MÀU XANH LÁ) ---
-                # Lấy toạ độ safe zone từ cài đặt của vehicle_sys
                 if vehicle_sys:
-                    sz = vehicle_sys.get_safe_zone(w, h) # (x1, y1, x2, y2)
-                    # Vẽ hình chữ nhật rỗng
+                    sz = vehicle_sys.get_safe_zone(w, h) 
                     cv2.rectangle(frame, (sz[0], sz[1]), (sz[2], sz[3]), (0, 255, 0), 2)
                     cv2.putText(frame, "SAFE ZONE", (sz[0], sz[1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
-                # --- 2. VẼ ĐẶC THÙ TỪNG CAM ---
                 if cam_id == 'front':
-                    # Cam trước: Vẽ vạch Trigger (Màu xanh dương)
                     cv2.line(frame, TRIGGER_LINE[0], TRIGGER_LINE[1], (255, 0, 0), 2)
                     cv2.putText(frame, "TRIGGER LINE", (TRIGGER_LINE[0][0], TRIGGER_LINE[0][1]-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
                     
-                    # Vẽ xe đang chạm vạch (nếu có)
+
                     for trk in trigger_sys.latest_tracks:
                         x1, y1, x2, y2 = map(int, trk['box'])
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 1) # Vàng mỏng
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 1) 
 
                 elif cam_id == 'back':
-                    # Cam sau:
                     if vehicle_sys:
-                         # 1. Vẽ TẤT CẢ xe detect được (Màu Cam - Visual only)
                         if hasattr(vehicle_sys, 'raw_detections'):
                             for (r_box, r_id) in vehicle_sys.raw_detections:
                                 rcx, rcy, rw, rh = r_box
@@ -558,7 +551,7 @@ def gen_mjpeg(cam_id):
                                 cv2.rectangle(frame, (rx1, ry1), (rx2, ry2), (0, 165, 255), 1) # Orange
                                 cv2.putText(frame, f"{r_id}", (rx1, ry1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 165, 255), 1)
 
-                        # 2. Vẽ xe ĐƯỢC CHỌN (Màu Đỏ Đậm)
+                   
                         if vehicle_sys.latest_box is not None:
                             bx1, by1, bx2, by2 = vehicle_sys.latest_box
                             # Scale coordinates (Note: latest_box is (x1, y1, x2, y2) in ORIG coords)

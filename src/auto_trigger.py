@@ -4,7 +4,7 @@ import time
 
 class AutoTriggerSystem:
     def __init__(self, model_path, line_points, cooldown=10):
-        print(f">>> [TRIGGER] Đang tải Model: {model_path}")
+        print(f">>> [TRIGGER] Loading model: {model_path}")
         self.model = YOLO(model_path)
   
         self.line_y = line_points[0][1]
@@ -79,7 +79,7 @@ class AutoTriggerSystem:
                         if prev_y < self.line_y and curr_y >= self.line_y:
                             if tid not in self.triggered_ids:
             
-                                print(f">>> [TRIGGER] 🚀 XE ID {tid} (Conf {best_vehicle['conf']:.2f}) CẮT VẠCH")
+                                print(f">>> [TRIGGER] Car ID {tid} (Conf {best_vehicle['conf']:.2f}) cuts the line")
                                 self.triggered_ids[tid] = now
                                 triggered_now = (True, tid)
             

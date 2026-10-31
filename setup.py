@@ -19,7 +19,7 @@ def check_python_version():
     """Check if Python version is 3.10 or higher"""
     print_header("Checking Python Version")
     if sys.version_info < (3, 10):
-        print("❌ Error: Python 3.10 or higher is required")
+        print("Error: Python 3.10 or higher is required")
         print(f"   Current version: {sys.version}")
         return False
     print(f"✓ Python version: {sys.version.split()[0]}")
@@ -71,7 +71,7 @@ def install_dependencies():
     print_header("Installing Dependencies")
     
     if not Path('requirements.txt').exists():
-        print("❌ Error: requirements.txt not found")
+        print("Error: requirements.txt not found")
         return False
     
     print("Installing packages from requirements.txt...")
@@ -80,7 +80,7 @@ def install_dependencies():
         print("✓ Dependencies installed successfully")
         return True
     except subprocess.CalledProcessError:
-        print("❌ Error: Failed to install dependencies")
+        print("Error: Failed to install dependencies")
         return False
 
 def check_model_weights():
@@ -96,7 +96,7 @@ def check_model_weights():
         if weight_path.exists():
             print(f"✓ Found: {weight}")
         else:
-            print(f"❌ Missing: {weight}")
+            print(f"Missing: {weight}")
             missing_weights.append(weight)
     
     if missing_weights:
@@ -137,28 +137,17 @@ def main():
     print("║         DK_AI System - Setup Wizard                   ║")
     print("╚════════════════════════════════════════════════════════╝")
     
-    # Check Python version
     if not check_python_version():
         sys.exit(1)
-    
-    # Create directories
     create_directories()
-    
-    # Create .env file
     create_env_file()
-    
-    # Install dependencies
     install_choice = input("\nDo you want to install dependencies now? (y/n): ").lower()
     if install_choice == 'y':
         install_dependencies()
     else:
         print("Skipping dependency installation")
         print("Run 'pip install -r requirements.txt' later")
-    
-    # Check model weights
     check_model_weights()
-    
-    # Display next steps
     display_next_steps()
 
 if __name__ == "__main__":

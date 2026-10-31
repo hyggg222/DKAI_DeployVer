@@ -194,7 +194,7 @@ def ai_loop():
                 # vehicle_sys.detect(f2, capture_enabled=False)
                 
                 if is_trig:
-                    print(f">>> [AI] 🚀 Trigger Activated: {tid}")
+                    print(f">>> [AI] Trigger Activated: {tid}")
                     current_session.update({
                         "state": "SCANNING",
                         "start_time": time.time(),
@@ -218,11 +218,11 @@ def ai_loop():
                 
                 # Log Success
                 if p is not None and current_session["plate_img"] is None:
-                    print(f">>> [SESSION] ✅ Captured PLATE")
+                    print(f">>> [SESSION] Captured PLATE")
                     current_session["plate_img"] = p
 
                 if c is not None and current_session["car_img"] is None:
-                    print(f">>> [SESSION] ✅ Captured CAR (ID: {car_id})")
+                    print(f">>> [SESSION] Captured CAR (ID: {car_id})")
                     current_session["car_img"] = c
                 
                 # Check Completion

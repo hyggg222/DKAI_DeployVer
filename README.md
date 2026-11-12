@@ -18,7 +18,7 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time li
 - [Configuration](#-configuration)
 - [Usage](#-usage)
 - [Mobile App Setup](#-mobile-app-setup)
-- [Screenshots](#-screenshots)
+- [Demo](#-demo)
 - [License](#-license)
 
 ## Features
@@ -309,13 +309,18 @@ flutter build apk --release
 
 The APK will be in `build/app/outputs/flutter-apk/app-release.apk`
 
-## Screenshots
+## Demo
 
-### Web Dashboard Overview
+### Web Dashboard Interface
 ![Web Dashboard](docs/images/dashboard.png)
-
-### Real-Time Detection Feed
 ![Live Monitoring](docs/images/dashboard-live.png)
+
+> **Web Demo Video**: Run `python ai_server_test.py` and access `http://localhost:8001` to view the live dual-camera recognition stream.
+
+### Mobile App
+<video src="docs/videos/app_demo.mp4" controls="controls" width="100%"></video>
+
+> **Direct Video Link**: [docs/videos/app_demo.mp4](docs/videos/app_demo.mp4) (H.264/AAC for cross-browser playback, converted from `appDemo.mkv`)
 
 ## API Documentation
 

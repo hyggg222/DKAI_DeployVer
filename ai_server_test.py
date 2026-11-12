@@ -106,6 +106,7 @@ DB_NAME = "registry_test.db"
 IMAGE_DIR = "images_test" 
 os.makedirs(IMAGE_DIR, exist_ok=True)
 os.makedirs(os.path.join(IMAGE_DIR, "captures"), exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
 
 def resource_path(relative_path):
     try:

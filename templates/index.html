@@ -1,127 +1,124 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DK_AI TEST SERVER</title>
+    <title>DKAI - Vehicle Monitoring Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f0f2f5;
-            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #212529;
         }
 
         .cam-feed {
             width: 100%;
-            min-height: 200px;
-            background: #000;
-            border-radius: 8px;
-            border: 2px solid #444;
+            min-height: 220px;
+            background: #111;
+            border-radius: 6px;
+            border: 2px solid #333;
+            object-fit: cover;
         }
 
         .card-review {
-            border-left: 6px solid #ffc107;
-            background-color: #fff9e6;
-            animation: slideIn 0.3s;
+            border-left: 6px solid #e0a800;
+            background-color: #fffdf5;
+            transition: transform 0.2s;
         }
 
         .card-approved {
             border-left: 6px solid #198754;
-            background-color: #fff;
-            opacity: 0.9;
+            background-color: #ffffff;
         }
 
         .img-thumb {
-            height: 80px;
+            height: 75px;
             width: 120px;
             object-fit: cover;
             border-radius: 4px;
             cursor: pointer;
-            border: 1px solid #ddd;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .scanning-mode .loader {
-            display: block;
+            border: 1px solid #ced4da;
+            background-color: #e9ecef;
         }
 
         .loader {
             display: none;
-            font-weight: bold;
+            font-weight: 700;
             color: #dc3545;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            50% {
-                opacity: 0.5;
-            }
         }
     </style>
 </head>
 
 <body>
-
-    <div class="container-fluid py-3">
+    <div class="container-fluid py-3 px-4">
         <div class="row mb-3">
-            <div class="col-12 text-center">
-                <div id="control-panel" class="p-3 bg-white shadow-sm rounded">
-                    <h4 class="mb-3 text-uppercase fw-bold text-dark">TEST SERVER CONTROL (SOCKET.IO)</h4>
-                    <div class="alert alert-warning">Running in TEST MODE with Socket.IO</div>
-
-                    <div id="scanning-indicator" class="loader mt-2">
-                        <h4>📡 SCANNING... <span id="timer">10</span>s</h4>
-                        <div class="progress mt-2" style="height: 5px; width: 50%; margin: 0 auto;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
-                                style="width: 100%"></div>
-                        </div>
+            <div class="col-12">
+                <div id="control-panel" class="p-3 bg-white shadow-sm rounded border d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1 text-uppercase fw-bold text-dark">DKAI Vehicle Access Control Console</h4>
+                        <div class="text-muted small">Real-Time License Plate Recognition & Automated Gate Control</div>
+                    </div>
+                    <div class="text-end d-flex align-items-center gap-2">
+                        <button id="btn-trigger" class="btn btn-sm btn-outline-primary fw-bold" onclick="triggerTestEvent()">
+                            ⚡ Simulate Vehicle Event
+                        </button>
+                        <span class="badge bg-secondary px-3 py-2" id="conn-status">Connecting...</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-5">
-                <div class="card shadow-sm mb-3">
-                    <div class="card-header bg-dark text-white fw-bold">CAM 1: BIỂN SỐ (FRONT)</div>
-                    <div class="card-body p-1"><img src="/video_feed/front" class="cam-feed"></div>
+            <!-- Camera Feeds -->
+            <div class="col-lg-5 col-md-6 mb-3">
+                <div class="card shadow-sm mb-3 border">
+                    <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                        <span>CAM 1: LICENSE PLATE (FRONT)</span>
+                        <span class="badge bg-success">ONLINE</span>
+                    </div>
+                    <div class="card-body p-2 bg-black">
+                        <img src="/video_feed/front" class="cam-feed" alt="Front Camera Stream">
+                    </div>
                 </div>
-                <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white fw-bold">CAM 2: XE RA VÀO (BACK)</div>
-                    <div class="card-body p-1"><img src="/video_feed/back" class="cam-feed"></div>
+                <div class="card shadow-sm border">
+                    <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                        <span>CAM 2: VEHICLE ACCESS (REAR)</span>
+                        <span class="badge bg-success">ONLINE</span>
+                    </div>
+                    <div class="card-body p-2 bg-black">
+                        <img src="/video_feed/back" class="cam-feed" alt="Rear Camera Stream">
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-7">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-secondary">📋 LIVE RESULTS</h5>
-                    <div>
-                        <span class="badge bg-secondary ms-2" id="conn-status">Connecting...</span>
+            <!-- Detection Logs -->
+            <div class="col-lg-7 col-md-6">
+                <div class="card shadow-sm border h-100">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0">📋 REAL-TIME DETECTION LOGS</h5>
+                        <div id="scanning-indicator" class="loader">
+                            <span>📡 SCANNING VEHICLE...</span>
+                        </div>
                     </div>
-                </div>
-                <div id="list-container" style="height: 75vh; overflow-y: auto;">
+                    <div class="card-body p-3">
+                        <div id="list-container" style="height: 72vh; overflow-y: auto;">
+                            <!-- Detection cards dynamically inserted here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Image Zoom Modal -->
     <div class="modal fade" id="imgModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-body text-center bg-dark"><img id="zoomImg" src="" class="img-fluid"
-                        style="max-height: 80vh"></div>
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-body text-center p-2">
+                    <img id="zoomImg" src="" class="img-fluid rounded" style="max-height: 85vh;">
+                </div>
             </div>
         </div>
     </div>
@@ -129,91 +126,143 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script>
+        const FALLBACK_PLATE = "/static/no_plate.jpg";
+        const FALLBACK_CAR = "/static/no_car.jpg";
+
         // SOCKET.IO CONNECTION
         const socket = io();
 
         socket.on('connect', () => {
-            document.getElementById('conn-status').innerText = "Connected (Socket.IO)";
-            document.getElementById('conn-status').className = "badge bg-success ms-2";
+            const el = document.getElementById('conn-status');
+            el.innerText = "System Connected (Socket.IO)";
+            el.className = "badge bg-success px-3 py-2";
         });
 
         socket.on('disconnect', () => {
-            document.getElementById('conn-status').innerText = "Disconnected";
-            document.getElementById('conn-status').className = "badge bg-danger ms-2";
+            const el = document.getElementById('conn-status');
+            el.innerText = "Disconnected";
+            el.className = "badge bg-danger px-3 py-2";
         });
 
-        // Listen for 'status_update'
+        // Listen for scanning state
         socket.on('status_update', (payload) => {
-            updateUIState(payload);
-        });
-
-        // Listen for 'review_request' (New Protocol)
-        socket.on('review_request', (payload) => {
-            console.log("Review Request:", payload);
-            if (payload.data) {
-                renderCard(payload.data, true);
+            const indicator = document.getElementById('scanning-indicator');
+            if (payload && payload.status === 'scanning') {
+                indicator.style.display = 'block';
             } else {
-                renderCard(payload, true); // Fallback
+                indicator.style.display = 'none';
             }
         });
 
-        // Also listen for generic 'update' just in case
+        // Listen for review requests and vehicle notifications
+        socket.on('review_request', (payload) => {
+            const data = payload.data ? payload.data : payload;
+            renderCard(data, true);
+        });
+
+        socket.on('notify_vehicle', (payload) => {
+            const data = payload.data ? payload.data : payload;
+            renderCard(data, true);
+        });
+
         socket.on('update', (payload) => {
-            if (payload.type === 'review_request') {
+            if (payload.type === 'review_request' && payload.data) {
                 renderCard(payload.data, true);
             }
         });
 
         const container = document.getElementById('list-container');
-        const scanIndicator = document.getElementById('scanning-indicator');
-
-        function updateUIState(payload) {
-            if (payload.status === 'scanning') {
-                scanIndicator.style.display = 'block';
-            } else {
-                scanIndicator.style.display = 'none';
-            }
-        }
 
         function renderCard(data, isNew) {
-            // Avoid duplicates if possible
-            if (document.getElementById(`card-${data.id}`)) return;
+            if (!data) return;
+            const id = data.id || Math.floor(Math.random() * 1000);
+            if (document.getElementById(`card-${id}`)) return;
+
+            const timeStr = data.time || (data.timestamp ? (data.timestamp.includes(' ') ? data.timestamp.split(' ')[1] : data.timestamp) : new Date().toLocaleTimeString());
+            const plateNumber = data.plate_number || data.plate || 'UNKNOWN';
+            const plateImg = data.plate_image || data.plate_url || data.plate_image_url || FALLBACK_PLATE;
+            const carImg = data.car_image || data.car_url || data.image_url || FALLBACK_CAR;
+            const statusRaw = (data.status || 'review_needed').toUpperCase();
+
+            let statusLabel = statusRaw;
+            let statusBadge = "bg-warning text-dark";
+            let cardClass = "card-review";
+
+            if (statusRaw === 'APPROVED' || statusRaw === 'CONFIRMED') {
+                statusLabel = "APPROVED";
+                statusBadge = "bg-success text-white";
+                cardClass = "card-approved";
+            } else if (statusRaw === 'REVIEW_NEEDED' || statusRaw === 'REVIEW_REQUIRED') {
+                statusLabel = "PENDING REVIEW";
+                statusBadge = "bg-warning text-dark";
+                cardClass = "card-review";
+            }
 
             const div = document.createElement('div');
-            div.id = `card-${data.id}`;
-            let statusClass = "card-review";
-
-            div.className = `card shadow-sm mb-3 ${statusClass}`;
+            div.id = `card-${id}`;
+            div.className = `card shadow-sm mb-3 border ${cardClass}`;
             div.innerHTML = `
-            <div class="card-body p-2">
+            <div class="card-body p-3">
                 <div class="row align-items-center">
                     <div class="col-md-2 text-center text-muted small">
-                        ${data.time}<br><strong>#${data.id}</strong>
+                        <span class="fw-bold text-dark d-block">${timeStr}</span>
+                        <span>#${id}</span>
                     </div>
-                    <div class="col-md-3 text-center">
-                         <img src="${data.plate_image}" class="img-thumb" onclick="zoom(this.src)" onerror="this.src='/static/no_plate.jpg'">
+                    <div class="col-md-3 text-center mb-2 mb-md-0">
+                        <img src="${plateImg}" class="img-thumb" alt="License Plate Crop"
+                             onclick="zoom(this.src)" 
+                             onerror="this.onerror=null; this.src='${FALLBACK_PLATE}';">
+                        <div class="small text-muted mt-1">Plate Crop</div>
                     </div>
-                    <div class="col-md-3 text-center">
-                         <img src="${data.car_image}" class="img-thumb" onclick="zoom(this.src)" onerror="this.src='/static/no_car.jpg'">
+                    <div class="col-md-3 text-center mb-2 mb-md-0">
+                        <img src="${carImg}" class="img-thumb" alt="Vehicle Overview"
+                             onclick="zoom(this.src)" 
+                             onerror="this.onerror=null; this.src='${FALLBACK_CAR}';">
+                        <div class="small text-muted mt-1">Vehicle View</div>
                     </div>
-                    <div class="col-md-4">
-                        <h3 class="text-primary text-center fw-bold">${data.plate_number}</h3>
-                        <div class="text-center"><span class="badge bg-secondary">${data.status}</span></div>
+                    <div class="col-md-4 text-center text-md-end">
+                        <h3 class="text-primary fw-bold mb-1 font-monospace">${plateNumber}</h3>
+                        <div><span class="badge ${statusBadge} px-2 py-1">${statusLabel}</span></div>
                     </div>
                 </div>
             </div>`;
             container.insertBefore(div, container.firstChild);
         }
 
-        function zoom(src) { document.getElementById('zoomImg').src = src; new bootstrap.Modal(document.getElementById('imgModal')).show(); }
+        function zoom(src) {
+            document.getElementById('zoomImg').src = src;
+            new bootstrap.Modal(document.getElementById('imgModal')).show();
+        }
 
-        // Load History on Start
+        async function triggerTestEvent() {
+            const btn = document.getElementById('btn-trigger');
+            btn.disabled = true;
+            btn.innerText = "Triggering...";
+            try {
+                const res = await fetch('/api/test/trigger', { method: 'POST' });
+                if (!res.ok) console.warn("Trigger failed with status", res.status);
+            } catch (err) {
+                console.error("Trigger error:", err);
+            } finally {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "⚡ Simulate Vehicle Event";
+                }, 1000);
+            }
+        }
+
+        // Load History on Page Load
         window.onload = async () => {
             try {
                 const res = await fetch('/api/history');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                data.forEach(item => renderCard(item, false));
-            } catch (e) { console.error("History error:", e); }
+                if (Array.isArray(data)) {
+                    data.forEach(item => renderCard(item, false));
+                }
+            } catch (e) {
+                console.warn("History load note:", e.message);
+            }
         };
     </script>
 </body>

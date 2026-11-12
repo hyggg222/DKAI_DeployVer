@@ -498,6 +498,14 @@ async def api_ingest_history():
     history.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
     return history
 
+# ================= TEST TRIGGER ENDPOINT =================
+@fastapi_app.post("/api/test/trigger")
+async def api_test_trigger():
+    """Manually trigger a vehicle detection event for instant testing."""
+    print(">>> [TEST] Manual trigger received via /api/test/trigger")
+    await finish_session_async("Manual Test Trigger", None, None, 999)
+    return {"status": "success", "message": "Simulated vehicle event triggered"}
+
 # ================= WEB ROUTES =================
 @fastapi_app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -586,13 +594,23 @@ def get_history():
     
     res = []
     for r in rows:
+        ts = r["timestamp"] if "timestamp" in r.keys() else ""
+        t_str = ts.split()[1] if " " in ts else ts
+        p_val = r["plate"] if "plate" in r.keys() else r.get("plate_number", "UNKNOWN")
+        p_img = r["plate_url"] if "plate_url" in r.keys() else r.get("plate_image", "")
+        c_img = r["car_url"] if "car_url" in r.keys() else r.get("car_image", "")
+        st = r["status"] if "status" in r.keys() else "review_needed"
         res.append({
             "id": r["id"],
-            "time": r["timestamp"],
-            "plate_number": r["plate"],
-            "plate_image": r["plate_url"],
-            "car_image": r["car_url"],
-            "status": r["status"],
+            "timestamp": ts,
+            "time": t_str,
+            "plate": p_val,
+            "plate_number": p_val,
+            "plate_url": p_img,
+            "plate_image": p_img,
+            "car_url": c_img,
+            "car_image": c_img,
+            "status": st,
             "visit_count": 1
         })
     return res

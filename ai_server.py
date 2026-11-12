@@ -45,9 +45,11 @@ load_dotenv()
 # ================= CONFIGURATION =================
 DB_NAME = "registry.db"
 IMAGE_DIR = "images" 
+STATIC_DIR = "static"
 os.makedirs(IMAGE_DIR, exist_ok=True)
 os.makedirs(os.path.join(IMAGE_DIR, "captures"), exist_ok=True)
 os.makedirs(os.path.join(IMAGE_DIR, "confirmed"), exist_ok=True)
+os.makedirs(STATIC_DIR, exist_ok=True)
 
 # Helper for Resource Path
 def resource_path(relative_path):
@@ -69,8 +71,7 @@ app = socketio.ASGIApp(sio, fastapi_app)
 
 # Mount Static Files
 fastapi_app.mount("/images", StaticFiles(directory=IMAGE_DIR), name="images")
-# Compatibility with test server paths (it used /static)
-fastapi_app.mount("/static", StaticFiles(directory=IMAGE_DIR), name="static")
+fastapi_app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -394,7 +395,27 @@ def get_recent_records(limit=50):
     c.execute("SELECT * FROM records ORDER BY id DESC LIMIT ?", (limit,))
     rows = c.fetchall()
     conn.close()
-    return [dict(ix) for ix in rows]
+    res = []
+    for r in rows:
+        ts = r["timestamp"] if "timestamp" in r.keys() else ""
+        t_str = ts.split()[1] if " " in ts else ts
+        p_val = r["plate"] if "plate" in r.keys() else "UNKNOWN"
+        p_img = r["plate_url"] if "plate_url" in r.keys() else ""
+        c_img = r["car_url"] if "car_url" in r.keys() else ""
+        st = r["status"] if "status" in r.keys() else "review_needed"
+        res.append({
+            "id": r["id"],
+            "timestamp": ts,
+            "time": t_str,
+            "plate": p_val,
+            "plate_number": p_val,
+            "plate_url": p_img,
+            "plate_image": p_img,
+            "car_url": c_img,
+            "car_image": c_img,
+            "status": st
+        })
+    return res
 
 # ================= MAIN =================
 if __name__ == "__main__":

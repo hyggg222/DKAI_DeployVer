@@ -39,5 +39,6 @@ mobile_flutter/.flutter-plugins-dependencies
 
 # Project Specific
 /images/
+/images_test/
 /outputs/
 /captures/

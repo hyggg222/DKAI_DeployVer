@@ -10,17 +10,14 @@ An AI-powered Vehicle Entry/Exit Monitoring & Logging System featuring real-time
 ## Demo
 
 ### Web Dashboard Interface
-<video src="docs/videos/dashboard_demo.mp4" controls="controls" width="100%"></video>
+![Web Dashboard Demo](docs/videos/dashboard_demo.gif)
 
-> **Direct Video Link**: [docs/videos/dashboard_demo.mp4](docs/videos/dashboard_demo.mp4) (H.264/AAC for cross-browser playback)
-
-![Web Dashboard](docs/images/dashboard.png)
-![Live Monitoring](docs/images/dashboard-live.png)
+> **Direct Video (MP4)**: [docs/videos/dashboard_demo.mp4](docs/videos/dashboard_demo.mp4)
 
 ### Mobile App
-<video src="docs/videos/mobile_demo.mp4" controls="controls" width="50%"></video>
+![Mobile App Demo](docs/videos/mobile_demo.gif)
 
-> **Direct Video Link**: [docs/videos/mobile_demo.mp4](docs/videos/mobile_demo.mp4) (Cropped mobile interface demo)
+> **Direct Video (MP4)**: [docs/videos/mobile_demo.mp4](docs/videos/mobile_demo.mp4)
 
 ## Table of Contents
 

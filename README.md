@@ -7,8 +7,22 @@
 
 A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time license plate detection, recognition, and automated gate control.
 
+## Demo
+
+### Web Dashboard Interface
+![Web Dashboard](docs/images/dashboard.png)
+![Live Monitoring](docs/images/dashboard-live.png)
+
+> **Web Demo Video**: Run `python ai_server_test.py` and access `http://localhost:8001` to view the live dual-camera recognition stream.
+
+### Mobile App
+<video src="docs/videos/app_demo.mp4" controls="controls" width="100%"></video>
+
+> **Direct Video Link**: [docs/videos/app_demo.mp4](docs/videos/app_demo.mp4) (H.264/AAC for cross-browser playback, converted from `appDemo.mkv`)
+
 ## Table of Contents
 
+- [Demo](#-demo)
 - [Features](#-features)
 - [Quick Start](#-quick-start)
 - [Tech Stack](#-tech-stack)
@@ -18,7 +32,7 @@ A comprehensive AI-driven Vehicle Entry/Exit Management System with real-time li
 - [Configuration](#-configuration)
 - [Usage](#-usage)
 - [Mobile App Setup](#-mobile-app-setup)
-- [Demo](#-demo)
+- [API Documentation](#-api-documentation)
 - [License](#-license)
 
 ## Features
@@ -308,19 +322,6 @@ flutter build apk --release
 ```
 
 The APK will be in `build/app/outputs/flutter-apk/app-release.apk`
-
-## Demo
-
-### Web Dashboard Interface
-![Web Dashboard](docs/images/dashboard.png)
-![Live Monitoring](docs/images/dashboard-live.png)
-
-> **Web Demo Video**: Run `python ai_server_test.py` and access `http://localhost:8001` to view the live dual-camera recognition stream.
-
-### Mobile App
-<video src="docs/videos/app_demo.mp4" controls="controls" width="100%"></video>
-
-> **Direct Video Link**: [docs/videos/app_demo.mp4](docs/videos/app_demo.mp4) (H.264/AAC for cross-browser playback, converted from `appDemo.mkv`)
 
 ## API Documentation
 

@@ -1,9 +1,14 @@
 import cv2
-from ultralytics import YOLO
+try:
+    from ultralytics import YOLO
+except Exception:
+    YOLO = None
 import time
 
 class AutoTriggerSystem:
     def __init__(self, model_path, line_points, cooldown=10):
+        if YOLO is None:
+            raise RuntimeError("YOLO could not be imported. Please ensure ultralytics and PyTorch are installed.")
         print(f">>> [TRIGGER] Loading model: {model_path}")
         self.model = YOLO(model_path)
   

@@ -7,7 +7,7 @@ class ApiConfig {
   // IMPORTANT: Replace '192.168.1.100' with your actual server IP address
   // The server will display its IP address when it starts
   static const String serverIp = '192.168.1.100';
-  static const String serverPort = '8000';
+  static const String serverPort = '8001';
 
   // Base URLs
   static const String baseUrl = 'http://$serverIp:$serverPort';

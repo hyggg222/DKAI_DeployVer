@@ -1,9 +1,21 @@
+import os
 import cv2
 import numpy as np
-from ultralytics import YOLO
+
+try:
+    from ultralytics import YOLO
+except Exception:
+    YOLO = None
 
 class CarDetector:
-    def __init__(self, model_path='/home/huy/DK_AI/AI/weights/yolov8s.pt'):
+    def __init__(self, model_path=None):
+        if YOLO is None:
+            raise RuntimeError("YOLO could not be imported. Please ensure ultralytics and PyTorch are installed.")
+        if model_path is None:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            default_weights = os.path.join(base_dir, 'weights', 'yolo11s.pt')
+            fallback_weights = os.path.join(base_dir, 'weights', 'yolov8s.pt')
+            model_path = default_weights if os.path.exists(default_weights) else fallback_weights
         print(f"Loading Strict Car Detector: {model_path}...")
         self.model = YOLO(model_path)
         self.target_classes = [2, 5, 7]  # Car, Bus, Truck

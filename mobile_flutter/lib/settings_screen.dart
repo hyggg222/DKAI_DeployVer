@@ -61,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              "Enter the IP address shown on the Server Console (e.g. 192.168.1.5:8000)",
+              "Enter the IP address shown on the Server Console (e.g. 192.168.1.5:8001)",
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),

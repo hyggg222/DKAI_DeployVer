@@ -9,15 +9,18 @@ import traceback # Added for debug
 import socket
 import asyncio
 import threading
-import torch  # Added for monkey-patch
+try:
+    import torch  # Added for monkey-patch
 
-# MONKEY PATCH: Fix for PyTorch 2.6+ weights_only=True default
-_original_load = torch.load
-def safe_load(*args, **kwargs):
-    if 'weights_only' not in kwargs:
-        kwargs['weights_only'] = False
-    return _original_load(*args, **kwargs)
-torch.load = safe_load
+    # MONKEY PATCH: Fix for PyTorch 2.6+ weights_only=True default
+    _original_load = torch.load
+    def safe_load(*args, **kwargs):
+        if 'weights_only' not in kwargs:
+            kwargs['weights_only'] = False
+        return _original_load(*args, **kwargs)
+    torch.load = safe_load
+except Exception:
+    torch = None
 
 import sqlite3
 import uvicorn
@@ -497,7 +500,7 @@ async def api_ingest_history():
 # ================= WEB ROUTES =================
 @fastapi_app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 # Note: WebSocket endpoint removed because we use Socket.IO (mounted at /socket.io automatically)
 

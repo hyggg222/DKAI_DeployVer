@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
-from ultralytics import YOLO
+try:
+    from ultralytics import YOLO
+except Exception:
+    YOLO = None
 import base64
 import json
 import requests
@@ -9,6 +12,8 @@ import time
 
 class PlateRecognizer:
     def __init__(self, plate_model_path, api_key=None):
+        if YOLO is None:
+            raise RuntimeError("YOLO could not be imported. Please ensure ultralytics and PyTorch are installed.")
         print(f"Loading Plate Detector (Continuous Hunting Mode): {plate_model_path}")
         self.plate_model = YOLO(plate_model_path)
         self.api_key = api_key

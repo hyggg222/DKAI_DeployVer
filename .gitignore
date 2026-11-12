@@ -30,10 +30,14 @@ test_videos/*.mp4
 # Flutter/Dart
 mobile_flutter/.dart_tool/
 mobile_flutter/build/
+mobile_flutter/android/build/
+mobile_flutter/android/.gradle/
 mobile_flutter/.flutter-plugins
 mobile_flutter/.flutter-plugins-dependencies
+**/android/build/
+**/android/.gradle/
 
 # Project Specific
-images/
-outputs/
-captures/
+/images/
+/outputs/
+/captures/

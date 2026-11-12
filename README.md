@@ -62,30 +62,39 @@ python ai_server_test.py
 
 ```
 DKAI_DeployVer/
-├── ai_server.py              # Main production server (RTSP cameras)
-├── ai_server_test.py         # Test server (video files)
-├── setup.py                  # Setup Wizard script
+├── ai_server.py              # Production server (RTSP cameras, FastAPI + Socket.IO)
+├── ai_server_test.py         # Test server (video file simulation)
+├── setup.py                  # Setup wizard and environment verification
 ├── requirements.txt          # Python dependencies
-├── .env.example              # Environment variables template
-├── .gitignore               # Git ignore rules
+├── Dockerfile                # Container definition
+├── docker-compose.yml        # Docker compose service definition
+├── .env.example              # Environment configuration template
+├── .gitignore               # Git ignore configuration
 ├── LICENSE                  # MIT License
-├── README.md                # This file
-├── src/                     # Core AI modules
-│   ├── vehicle_detector.py # Vehicle detection logic
-│   ├── plate_detector.py   # License plate detection
-│   └── ocr_processor.py    # OCR with Gemini
-├── weights/                 # Pre-trained model weights
-│   ├── yolo11n.pt          # YOLOv11 vehicle detection
-│   └── best.pt             # Custom license plate model
-├── templates/              # HTML templates (if any)
-├── test_videos/            # Sample footage for testing
-│   ├── front.mp4          # Front camera simulation
-│   └── back.mp4           # Back camera simulation
-└── mobile_flutter/         # Flutter mobile app
-    ├── lib/               # Dart source code
-    ├── android/          # Android config
-    ├── ios/             # iOS config
-    └── pubspec.yaml     # Flutter dependencies
+├── README.md                # Project documentation
+├── src/                     # Core AI and backend modules
+│   ├── auto_trigger.py     # Vehicle tracking and line-crossing trigger logic
+│   ├── camera_manager.py   # RTSP dual camera stream manager
+│   ├── database.py         # SQLite logging and record management
+│   ├── plate_detector.py   # License plate detector & Gemini OCR integration
+│   └── vehicle_detector.py # Vehicle detection and bounding-box validation
+├── weights/                 # Pre-trained weights included in repo
+│   ├── license-plate-finetune-v1l.pt # License plate detection
+│   ├── yolo11s.pt          # YOLOv11 vehicle detection
+│   └── yolov8s.pt          # YOLOv8 vehicle detection
+├── templates/              # Web interface
+│   └── index.html          # Real-time monitoring dashboard
+├── tests/                  # Automated test suite
+│   ├── test_database.py    # Database CRUD tests
+│   ├── test_server_endpoints.py # FastAPI route tests
+│   ├── test_smoke.py       # Module import tests
+│   └── test_vehicle_detector_logic.py # Detection algorithm tests
+├── test_videos/            # Directory for user-provided test videos (.mp4)
+└── mobile_flutter/         # Flutter mobile application
+    ├── lib/                # Flutter/Dart source code
+    ├── android/            # Android platform configuration
+    ├── ios/                # iOS platform configuration
+    └── pubspec.yaml        # Flutter package manifest
 ```
 
 ## Installation
@@ -116,24 +125,14 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Download Model Weights
+### 4. Model Weights
 
-The model weights are not included in the repository due to file size. Download them from the following sources:
+Pre-trained model weights are bundled directly in the `weights/` directory:
+- `weights/yolo11s.pt`: YOLOv11 small model for vehicle detection
+- `weights/license-plate-finetune-v1l.pt`: Custom fine-tuned YOLO model for license plate localization
+- `weights/yolov8s.pt`: Alternative YOLOv8 vehicle detection model
 
-#### YOLOv11 Weights
-```bash
-# Download YOLOv11n model
-wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolo11n.pt -O weights/yolo11n.pt
-```
-
-Or manually download from: [Ultralytics YOLO Models](https://github.com/ultralytics/ultralytics)
-
-#### Custom License Plate Detection Model
-Contact the repository owner or refer to the model training documentation for the custom `best.pt` model.
-
-**Note**: Ensure both files are placed in the `weights/` directory:
-- `weights/yolo11n.pt`
-- `weights/best.pt`
+No additional download is required. The setup script (`python setup.py`) will automatically verify these weights.
 
 ### 5. Running with Docker (Optional)
 
@@ -196,7 +195,11 @@ rtsp://username:password@camera.example.com/live
 
 ### Running the Test Server (Demo Mode)
 
-Use this mode to verify the system without real cameras. It uses videos from `test_videos/`.
+Use this mode to verify the system without physical RTSP cameras.
+
+To run with sample test videos, place your video files into the `test_videos/` directory:
+- `test_videos/front.mp4` (Front entry camera)
+- `test_videos/back.mp4` (Exit camera)
 
 ```bash
 python ai_server_test.py
@@ -204,9 +207,9 @@ python ai_server_test.py
 
 **What happens:**
 - Server starts on `http://localhost:8001`
-- Automatically loops `front.mp4` and `back.mp4` from `test_videos/`
-- Simulates vehicle detection and plate recognition
-- Perfect for testing, demos, and development
+- Loops `front.mp4` and `back.mp4` from `test_videos/` (falls back to standby test frames if no videos are present)
+- Simulates vehicle detection and license plate recognition
+- Perfect for local testing, demos, and verification
 
 **Access the web interface:**
 - Open browser to `http://localhost:8001`
@@ -308,52 +311,34 @@ The APK will be in `build/app/outputs/flutter-apk/app-release.apk`
 
 ## Screenshots
 
-*(Placeholder for future screenshots - Add your images to docs/images/ folder)*
-### Web Interface
+### Web Dashboard Overview
 ![Web Dashboard](docs/images/dashboard.png)
 
-### Mobile App
-<img src="docs/images/mobile-app.png" alt="Mobile App" width="300">
+### Real-Time Detection Feed
+![Live Monitoring](docs/images/dashboard-live.png)
 
 ## API Documentation
 
 ### REST API Endpoints
 
-#### Get Vehicle Logs
+#### Get Recent Records
 ```http
-GET /api/logs
+GET /api/history
 ```
 
 **Response:**
 ```json
-{
-  "logs": [
-    {
-      "id": 1,
-      "plate_number": "ABC1234",
-      "timestamp": "2025-01-10 14:30:00",
-      "camera": "front",
-      "confidence": 0.95
-    }
-  ]
-}
-```
-
-#### Get System Status
-```http
-GET /api/status
-```
-
-**Response:**
-```json
-{
-  "status": "online",
-  "cameras": {
-    "front": "connected",
-    "back": "connected"
-  },
-  "uptime": 3600
-}
+[
+  {
+    "id": 1,
+    "timestamp": "2026-11-12 14:30:00",
+    "plate": "30A12345",
+    "plate_url": "/images/captures/plate_1.jpg",
+    "car_url": "/images/captures/car_1.jpg",
+    "status": "APPROVED",
+    "note": ""
+  }
+]
 ```
 
 ### WebSocket Events

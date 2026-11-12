@@ -4,7 +4,7 @@ services:
   dkai-server:
     build: .
     ports:
-      - "8000:8000"
+      - "8001:8001"
     volumes:
       - ./weights:/app/weights
       - ./vehicle_logs.db:/app/vehicle_logs.db

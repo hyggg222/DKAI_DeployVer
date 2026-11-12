@@ -28,7 +28,7 @@ def check_python_version():
 def create_directories():
     """Create necessary directories if they don't exist"""
     print_header("Creating Directories")
-    directories = ['weights', 'test_videos', 'templates', 'src']
+    directories = ['weights', 'test_videos', 'templates', 'src', 'outputs', 'images', 'static']
     
     for directory in directories:
         path = Path(directory)

@@ -7,7 +7,9 @@ services:
       - "8001:8001"
     volumes:
       - ./weights:/app/weights
-      - ./vehicle_logs.db:/app/vehicle_logs.db
+      - ./registry.db:/app/registry.db
+      - ./images:/app/images
+      - ./outputs:/app/outputs
     env_file:
       - .env
     restart: unless-stopped

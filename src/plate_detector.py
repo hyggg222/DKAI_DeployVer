@@ -74,6 +74,28 @@ class PlateRecognizer:
         
         return img, conf
 
+    async def validate_event_gemini_async(self, p_img, c_img=None):
+        """Asynchronously call Gemini OCR to validate license plate and event."""
+        if p_img is None:
+            return None
+        import asyncio
+        loop = asyncio.get_running_loop()
+        try:
+            plate_text = await loop.run_in_executor(None, self.recognize_gemini, p_img)
+            if plate_text:
+                return {
+                    "plate_text": plate_text,
+                    "decision": "AUTO_CONFIRM",
+                    "notify": {"alert_mode": "SILENT_OK"}
+                }
+        except Exception as e:
+            print(f">>> [GEMINI ASYNC ERROR] {e}")
+        return {
+            "plate_text": "UNKNOWN",
+            "decision": "NEED_HUMAN_CONFIRM",
+            "notify": {"alert_mode": "VIBRATE_AND_SOUND"}
+        }
+
     def recognize_gemini(self, img_crop):
         if img_crop is None:
             print(">>> [GEMINI] Error: Image null")

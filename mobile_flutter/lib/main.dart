@@ -8,7 +8,6 @@ import 'dart:io'; // For Platform check
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Added for SystemChrome
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;

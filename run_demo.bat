@@ -34,6 +34,8 @@ goto menu
 
 :run_mobile
 echo.
+echo Freeing port 5000 if previously occupied...
+powershell -Command "Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"
 echo Starting Flutter Mobile App in Chrome on http://localhost:5000...
 start "DKAI Mobile App" cmd /k "cd /d "%~dp0mobile_flutter" && flutter run -d chrome --web-port=5000"
 goto menu

@@ -30,6 +30,11 @@ Write-Host "============================================================" -Foreg
 while ($true) {
     $key = (Read-Host "Choose option (M/T/Q)").Trim().ToUpper()
     if ($key -eq "M") {
+        Write-Host "Freeing port 5000 if occupied..." -ForegroundColor Yellow
+        $conn = Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue
+        if ($conn) {
+            $conn | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
+        }
         Write-Host "Starting Mobile App on Chrome..." -ForegroundColor Yellow
         Start-Process -FilePath "cmd.exe" -ArgumentList "/k cd /d `"$PSScriptRoot\mobile_flutter`" && flutter run -d chrome --web-port=5000"
     } elseif ($key -eq "T") {

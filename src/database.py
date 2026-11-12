@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 import os
 
-DB_NAME = "registry.db"
+DB_NAME = os.getenv("DATABASE_PATH", "registry.db")
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
